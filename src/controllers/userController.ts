@@ -25,6 +25,7 @@ export default class UserController {
         } as CreateUserResponse);
       }
     } catch (error) {
+      console.log('Error controller:', error);
       return res.status(500).json({
         ok: false,
         msg: 'Error trying to register a new user',
@@ -46,6 +47,19 @@ export default class UserController {
     try {
       const response = await userService.addFavorite(
         res.locals.user.user_favorites,
+        res.locals.user.user_id,
+        body
+      );
+      res.json(response);
+    } catch (error) {
+      console.log(error);
+      res.json({ ok: false, data: null });
+    }
+  }
+
+  public async updateUser({ body }: Request, res: Response) {
+    try {
+      const response = await userService.updateUser(
         res.locals.user.user_id,
         body
       );

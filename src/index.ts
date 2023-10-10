@@ -10,4 +10,6 @@ app.use('/api/v1', router);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+export default app;
+
 // https://github.com/wpcodevo/node_prisma_postgresql/blob/master/src/routes/auth.routes.ts

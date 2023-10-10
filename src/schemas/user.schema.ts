@@ -30,6 +30,17 @@ export const registerUserSchema = object({
   }),
 });
 
+export const updateUserSchema = object({
+  body: object({
+    user_first_name: string({
+      required_error: 'First name is required',
+    }).optional(),
+    user_last_name: string({
+      required_error: 'Last name is required',
+    }).optional(),
+  }),
+});
+
 export const loginUserSchema = object({
   body: object({
     user_email: string({

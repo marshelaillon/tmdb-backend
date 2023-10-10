@@ -5,6 +5,7 @@ import {
   registerUserSchema,
   loginUserSchema,
   userFavoriteSchema,
+  updateUserSchema,
 } from '../../schemas/user.schema';
 import { deserializeUser } from '../../middlewares/deserializeUser';
 
@@ -19,6 +20,12 @@ router
     deserializeUser,
     validateInput(userFavoriteSchema),
     userController.addFavorite
+  )
+  .put(
+    '/',
+    deserializeUser,
+    validateInput(updateUserSchema),
+    userController.updateUser
   );
 
 export default router;

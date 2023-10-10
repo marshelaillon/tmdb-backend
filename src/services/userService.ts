@@ -21,19 +21,28 @@ export default class UserService {
     newUserData: Prisma.usersCreateInput
   ): Promise<CreateUserResponse> {
     try {
-      const hashedPassword = await hash(newUserData.user_password, 10);
+      const salt = 10;
+      const hashedPassword = await hash(newUserData.user_password, salt);
       const newUser = await prisma.users.create({
-        data: { ...newUserData, user_password: hashedPassword },
+        data: {
+          user_email: newUserData.user_email.toLowerCase(),
+          user_first_name: newUserData.user_first_name.toLowerCase(),
+          user_last_name: newUserData.user_last_name.toLowerCase(),
+          user_password: hashedPassword,
+        },
       });
       if (newUser) {
         return {
           ok: true,
-          data: omit(newUser, excludedFields),
+          data: omit(
+            { ...newUser, user_id: Number(newUser.user_id) },
+            excludedFields
+          ),
         };
       }
       return { ok: false, data: null };
     } catch (error) {
-      console.log(error);
+      console.log('Error register', error);
       if ((error as Error)?.code === 'P2002') {
         return { ok: false, data: null, msg: 'Email is already in use' };
       }
@@ -57,10 +66,42 @@ export default class UserService {
         if (isUserAuthOk) {
           return {
             ok: true,
-            data: { ...omit(user, excludedFields), accessToken },
+            data: {
+              ...omit(
+                { ...user, user_id: Number(user.user_id) },
+                excludedFields
+              ),
+              accessToken,
+            },
           };
         }
         return { ok: false, data: null };
+      }
+
+      return { ok: false, data: null };
+    } catch (error) {
+      //console.log(error);
+      return { ok: false, data: null };
+    }
+  }
+
+  public async updateUser(userId: bigint, newUserData: any): Promise<any> {
+    try {
+      const updatedUser = await prisma.users.update({
+        where: {
+          user_id: userId,
+        },
+        data: newUserData,
+      });
+
+      if (updatedUser) {
+        return {
+          ok: true,
+          data: omit(
+            { ...updatedUser, user_id: Number(updatedUser.user_id) },
+            excludedFields
+          ),
+        };
       }
 
       return { ok: false, data: null };
