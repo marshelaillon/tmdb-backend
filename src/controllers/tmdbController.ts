@@ -18,9 +18,7 @@ export default class TMDBController {
       );
       return res.json(response);
     } catch (error) {
-      return res
-        .status(404)
-        .json({ ok: false, msg: 'Movie or TV series not found' });
+      return res.status(404).json({ ok: false, msg: (error as Error).message });
     }
   }
 
@@ -37,13 +35,7 @@ export default class TMDBController {
       );
       return res.json(response);
     } catch (error) {
-      console.error(
-        'Get movie or TV series details by id error',
-        (error as Error).message
-      );
-      return res
-        .status(500)
-        .json({ error: 'Error trying to get a movie/tv series details' });
+      return res.status(404).json({ ok: false, msg: (error as Error).message });
     }
   }
 
@@ -52,23 +44,7 @@ export default class TMDBController {
       const response = await tmdbService.getTrendingMoviesOrTvSeries();
       return res.json(response);
     } catch (error) {
-      console.error(
-        'Get movie or TV series trending error',
-        (error as Error).message
-      );
-      return res
-        .status(500)
-        .json({ error: 'Error trying to get trending movie/tv series' });
-    }
-  }
-
-  public async getGenres(_: Request, res: Response) {
-    try {
-      const response = await tmdbService.getGenres();
-      return res.json(response);
-    } catch (error) {
-      console.error('Get genres error', (error as Error).message);
-      return res.status(500).json({ error: 'Error trying to get genres' });
+      return res.status(404).json({ ok: false, msg: (error as Error).message });
     }
   }
 
@@ -79,8 +55,16 @@ export default class TMDBController {
       const response = await tmdbService.getSimilarMovieOrTv(type, id);
       return res.json(response);
     } catch (error) {
-      console.error('Get genres error', (error as Error).message);
-      return res.status(500).json({ error: 'Error trying to get genres' });
+      return res.status(404).json({ ok: false, msg: (error as Error).message });
+    }
+  }
+
+  public async getGenres(_: Request, res: Response) {
+    try {
+      const response = await tmdbService.getGenres();
+      return res.json(response);
+    } catch (error) {
+      return res.status(404).json({ ok: false, msg: (error as Error).message });
     }
   }
 }

@@ -1,11 +1,8 @@
 import {
   SearchResultOk,
-  SearchResultError,
   MediaType,
   MovieOrTvSeriesDetailsOk,
-  MovieOrTvSeriesDetailsError,
   TrendingItemsOk,
-  TrendingItemsError,
   GenreResultOk,
   GenreResultError,
 } from '../types/tmdbTypes';
@@ -21,7 +18,7 @@ export default class TmdbService {
   public async searchMovieOrTvSeriesByTitle(
     type: MediaType,
     title: string
-  ): Promise<SearchResultOk | SearchResultError> {
+  ): Promise<SearchResultOk> {
     try {
       const url = new URL(process.env.TMDB_BASE_URL!);
       url.pathname = `3/search/${type}`;
@@ -29,17 +26,20 @@ export default class TmdbService {
       url.searchParams.append('api_key', this.apiKey);
       const res = await fetch(url.toString());
       const data = await res.json();
-      if (data?.success === false) throw new Error();
+      if (data?.success === false)
+        throw new Error('Content type does not exist');
+      else if (data?.results?.length === 0)
+        throw new Error('Movie or TV Series not found');
       return { ok: true, data: { ...data, type } };
     } catch (error) {
-      throw new Error();
+      throw new Error((error as Error).message);
     }
   }
 
   public async getMovieOrTvSeriesDetailsById(
     type: MediaType,
     id: number
-  ): Promise<MovieOrTvSeriesDetailsOk | MovieOrTvSeriesDetailsError> {
+  ): Promise<MovieOrTvSeriesDetailsOk> {
     try {
       let trailer;
       const url = new URL(process.env.TMDB_BASE_URL!);
@@ -48,17 +48,16 @@ export default class TmdbService {
       url.searchParams.append('api_key', this.apiKey);
       const res = await fetch(url.toString());
       const data = await res.json();
+      if (data?.success === false)
+        throw new Error('The resource you requested could not be found');
       if (data?.videos?.length > 0) trailer = getTrailer(data.videos.results);
       return { ok: true, data: { ...data, type, trailer } };
     } catch (error) {
-      console.log(error);
-      return { ok: false, data: null };
+      throw new Error((error as Error).message);
     }
   }
 
-  public async getTrendingMoviesOrTvSeries(): Promise<
-    TrendingItemsOk | TrendingItemsError
-  > {
+  public async getTrendingMoviesOrTvSeries(): Promise<TrendingItemsOk> {
     try {
       const url = new URL(process.env.TMDB_BASE_URL!);
       url.pathname = `3/trending/all/day`;
@@ -68,8 +67,24 @@ export default class TmdbService {
       const data = await res.json();
       return { ok: true, data };
     } catch (error) {
-      console.log(error);
-      return { ok: false, data: null };
+      throw new Error((error as Error).message);
+    }
+  }
+
+  public async getSimilarMovieOrTv(type: MediaType, id: number): Promise<any> {
+    try {
+      const url = new URL(process.env.TMDB_BASE_URL!);
+      url.pathname = `3/${type}/${id}/similar`;
+      url.searchParams.append('language', 'en-US');
+      url.searchParams.append('api_key', this.apiKey);
+
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data?.success === false)
+        throw new Error('The resource you requested could not be found');
+      return { ok: true, data };
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
   }
 
@@ -92,23 +107,7 @@ export default class TmdbService {
       return { ok: true, data };
     } catch (error) {
       console.log(error);
-      return { ok: false, data: null };
-    }
-  }
-
-  public async getSimilarMovieOrTv(type: MediaType, id: number): Promise<any> {
-    try {
-      const url = new URL(process.env.TMDB_BASE_URL!);
-      url.pathname = `3/${type}/${id}/similar`;
-      url.searchParams.append('language', 'en-US');
-      url.searchParams.append('api_key', this.apiKey);
-
-      const res = await fetch(url);
-      const data = await res.json();
-      return { ok: true, data };
-    } catch (error) {
-      console.log(error);
-      return { ok: false, data: null };
+      throw new Error((error as Error).message);
     }
   }
 }
