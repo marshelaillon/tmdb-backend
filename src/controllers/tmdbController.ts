@@ -18,13 +18,9 @@ export default class TMDBController {
       );
       return res.json(response);
     } catch (error) {
-      console.error(
-        'Get movie or TV series by title error',
-        (error as Error).message
-      );
       return res
-        .status(500)
-        .json({ error: 'Error trying to get a movie/tv series' });
+        .status(404)
+        .json({ ok: false, msg: 'Movie or TV series not found' });
     }
   }
 

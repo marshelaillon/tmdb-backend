@@ -29,10 +29,10 @@ export default class TmdbService {
       url.searchParams.append('api_key', this.apiKey);
       const res = await fetch(url.toString());
       const data = await res.json();
+      if (data?.success === false) throw new Error();
       return { ok: true, data: { ...data, type } };
     } catch (error) {
-      console.log(error);
-      return { ok: false, data: null };
+      throw new Error();
     }
   }
 

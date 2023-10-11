@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { Router } from 'express';
 import tmdbRouter from './tmdb/tmdbRoutes';
 import userRouter from './user/userRoutes';
