@@ -12,11 +12,10 @@ export const validateInput =
       });
       return next();
     } catch (error) {
-      //console.log(error);
       if (error instanceof ZodError) {
         return res.status(400).json({
           ok: false,
-          message: error.errors[0].message,
+          msg: error.errors[0].message,
         });
       }
       return next(error);

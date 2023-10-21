@@ -4,7 +4,6 @@ import { hash, compare } from 'bcrypt';
 import { CreateUserResponse, LoginUserRequest } from '../types/userTypes';
 import { generateJwt } from '../utils/jwt';
 import { Favorite } from '../types/favoritesTypes';
-//import { Favorite } from '../types/favoritesTypes';
 
 const prisma = new PrismaClient();
 
@@ -31,22 +30,21 @@ export default class UserService {
           user_password: hashedPassword,
         },
       });
-      if (newUser) {
-        return {
-          ok: true,
-          data: omit(
-            { ...newUser, user_id: Number(newUser.user_id) },
-            excludedFields
-          ),
-        };
+      if (!newUser) {
+        throw new Error("User couldn't be created");
       }
-      return { ok: false, data: null };
+      return {
+        ok: true,
+        data: omit(
+          { ...newUser, user_id: Number(newUser.user_id) },
+          excludedFields
+        ),
+      };
     } catch (error) {
-      console.log('Error register', error);
       if ((error as Error)?.code === 'P2002') {
-        return { ok: false, data: null, msg: 'Email is already in use' };
+        throw new Error('Email is already in use');
       }
-      return { ok: false, data: null };
+      throw new Error('Something went wrong');
     }
   }
 

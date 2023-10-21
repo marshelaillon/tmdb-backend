@@ -10,26 +10,18 @@ export default class UserController {
     res: Response
   ): Promise<Response<CreateUserResponse>> {
     try {
-      if (body.user_password === body.user_password_confirm) {
-        delete body.user_password_confirm;
-        const newUserData = body;
-        const response: CreateUserResponse = await userService.registerUser(
-          newUserData
-        );
-        return res.json(response);
-      } else {
-        return res.json({
-          ok: false,
-          data: null,
-          msg: 'Passwords do not match',
-        } as CreateUserResponse);
-      }
+      delete body.user_password_confirm;
+      const newUserData = body;
+      const response: CreateUserResponse = await userService.registerUser(
+        newUserData
+      );
+      return res.json(response);
     } catch (error) {
-      console.log('Error controller:', error);
-      return res.status(500).json({
+      console.log(error);
+      return res.status(400).json({
         ok: false,
-        msg: 'Error trying to register a new user',
-      } as CreateUserResponse);
+        msg: (error as Error).message,
+      });
     }
   }
 
