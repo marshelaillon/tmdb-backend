@@ -7,7 +7,7 @@ async function registerUser(
   res: Response
 ): Promise<Response<CreateUserResponse>> {
   try {
-    delete body.user_password_confirm;
+    //delete body.user_password_confirm;
     const newUserData = body;
     const response: CreateUserResponse = await UserService.registerUser(
       newUserData

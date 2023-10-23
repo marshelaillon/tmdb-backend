@@ -1,20 +1,14 @@
 import { hash } from 'bcrypt';
-import { prismaMock as prisma } from '../prisma/singleton';
+import { prismaMock } from '../prisma/singleton';
 import { User, InputUser } from '../models/User';
 import userService from '../services/userService';
 import { omit } from 'lodash';
 import { excludedFields } from '../services/userService';
 
-/* const passwordsDoNotMatchInput = {
-  user_first_name: 'john',
-  user_last_name: 'doe',
-  user_password: 'Password1234',
-  user_password_confirm: 'Password123',
-  user_email: 'johndoe@gmail.com',
-}; */
-
 describe('user services', () => {
   it('should create a user', async () => {
+    expect.assertions(1);
+
     const inputUser: InputUser = {
       user_first_name: 'john',
       user_last_name: 'doe',
@@ -32,7 +26,7 @@ describe('user services', () => {
       user_favorites: [],
     };
 
-    prisma.users.create.mockResolvedValue(createdUser);
+    prismaMock.users.create.mockResolvedValue(createdUser);
 
     const expectedResult = {
       ok: true,
@@ -45,5 +39,25 @@ describe('user services', () => {
     const result = await userService.registerUser(inputUser);
 
     expect(result).toEqual(expectedResult);
+  });
+
+  it('should return an error: password do not match', async () => {
+    expect.assertions(1);
+
+    const passwordsDoNotMatchInput = {
+      user_first_name: 'john',
+      user_last_name: 'doe',
+      user_password: 'Password1234',
+      user_password_confirm: 'Password123',
+      user_email: 'johndoe@gmail.com',
+    };
+
+    const expectedError = new Error('Passwords do not match');
+
+    prismaMock.users.create.mockRejectedValue(expectedError);
+
+    await userService
+      .registerUser(passwordsDoNotMatchInput)
+      .catch(err => expect(err).toEqual(expectedError));
   });
 });

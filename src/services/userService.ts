@@ -1,9 +1,9 @@
 import { omit } from 'lodash';
 import { hash, compare } from 'bcrypt';
-import { CreateUserResponse, LoginUserRequest } from '../types/userTypes';
+import { LoginUserRequest, CreateUserResponse } from '../types/userTypes';
 import { generateJwt } from '../utils/jwt';
 import { Favorite } from '../types/favoritesTypes';
-import { Prisma } from '@prisma/client';
+//import { Prisma } from '@prisma/client';
 import prisma from '../prisma/client';
 
 export const excludedFields = ['user_password'];
@@ -15,11 +15,16 @@ declare global {
 }
 
 async function registerUser(
-  newUserData: Prisma.usersCreateInput
+  newUserData: any
+  //newUserData: Prisma.usersCreateInput
 ): Promise<CreateUserResponse> {
   try {
+    if (newUserData.user_password !== newUserData.user_password_confirm)
+      throw new Error('Passwords do not match');
+
     const salt = 10;
     const hashedPassword = await hash(newUserData.user_password, salt);
+
     const newUser = await prisma.users.create({
       data: {
         user_email: newUserData.user_email.toLowerCase(),
@@ -28,9 +33,11 @@ async function registerUser(
         user_password: hashedPassword,
       },
     });
+
     if (!newUser) {
       throw new Error("User couldn't be created");
     }
+
     return {
       ok: true,
       data: omit(
@@ -39,11 +46,11 @@ async function registerUser(
       ),
     };
   } catch (error) {
+    console.log((error as Error).message);
     if ((error as Error)?.code === 'P2002') {
       throw new Error('Email is already in use');
     }
-    console.log(error);
-    throw new Error('Something went wrong');
+    throw new Error((error as Error).message);
   }
 }
 
