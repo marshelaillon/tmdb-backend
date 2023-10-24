@@ -3,8 +3,9 @@ import { hash, compare } from 'bcrypt';
 import { LoginUserRequest, CreateUserResponse } from '../types/userTypes';
 import { generateJwt } from '../utils/jwt';
 import { Favorite } from '../types/favoritesTypes';
-//import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import prisma from '../prisma/client';
+import arePasswordsEqual from '../utils/checkPasswords';
 
 export const excludedFields = ['user_password'];
 
@@ -14,12 +15,26 @@ declare global {
   }
 }
 
+/* type UserCreateInputWithPasswordConfirmation = Prisma.usersCreateInput & {
+  user_password_confirm: string;
+}; */
+
+interface UserCreateInputWithPasswordConfirmation
+  extends Prisma.usersCreateInput {
+  user_password_confirm: string;
+}
+
 async function registerUser(
-  newUserData: any
-  //newUserData: Prisma.usersCreateInput
+  //newUserData: any
+  newUserData: UserCreateInputWithPasswordConfirmation
 ): Promise<CreateUserResponse> {
   try {
-    if (newUserData.user_password !== newUserData.user_password_confirm)
+    if (
+      !arePasswordsEqual(
+        newUserData.user_password,
+        newUserData.user_password_confirm
+      )
+    )
       throw new Error('Passwords do not match');
 
     const salt = 10;
@@ -82,7 +97,7 @@ async function login(loginData: LoginUserRequest): Promise<any> {
     return { ok: false, data: null };
   } catch (error) {
     console.log(error);
-    return { ok: false, data: null };
+    throw new Error((error as Error).message);
   }
 }
 

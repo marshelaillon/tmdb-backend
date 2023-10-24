@@ -7,14 +7,13 @@ async function registerUser(
   res: Response
 ): Promise<Response<CreateUserResponse>> {
   try {
-    //delete body.user_password_confirm;
     const newUserData = body;
     const response: CreateUserResponse = await UserService.registerUser(
       newUserData
     );
     return res.json(response);
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return res.status(400).json({
       ok: false,
       msg: (error as Error).message,
