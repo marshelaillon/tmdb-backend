@@ -61,7 +61,7 @@ async function registerUser(
       ),
     };
   } catch (error) {
-    console.log((error as Error).message);
+    //console.log((error as Error).message);
     if ((error as Error)?.code === 'P2002') {
       throw new Error('Email is already in use');
     }
@@ -91,12 +91,12 @@ async function login(loginData: LoginUserRequest): Promise<any> {
           },
         };
       }
-      return { ok: false, data: null };
+      throw new Error('Invalid credentials');
     }
 
-    return { ok: false, data: null };
+    throw new Error('Invalid credentials');
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw new Error((error as Error).message);
   }
 }
@@ -139,13 +139,7 @@ async function addFavorite(
         favorite.type === newFavoriteData.type
     );
 
-    if (existingFavorite) {
-      return {
-        ok: false,
-        msg: 'Favorite already exists',
-        data: null,
-      };
-    }
+    if (existingFavorite) throw new Error('Favorite already exists');
 
     const updatedUser = await prisma.users.update({
       where: {
@@ -168,10 +162,10 @@ async function addFavorite(
         //user_id: Number(updatedUser),
       };
     }
-    return { ok: false, data: null };
+    throw new Error('Something went wrong');
   } catch (error) {
-    //console.log(error);
-    return { ok: false, data: null };
+    console.log((error as Error).message);
+    throw new Error((error as Error).message);
   }
 }
 

@@ -5,6 +5,7 @@ import userService from '../services/userService';
 import { omit } from 'lodash';
 import { excludedFields } from '../services/userService';
 import { generateJwt } from '../utils/jwt';
+import { ContentType, Favorite } from '../types/favoritesTypes';
 
 describe('user services', () => {
   it('should create a user', async () => {
@@ -132,6 +133,114 @@ describe('user services', () => {
     }
 
     const result = await userService.login(loginData);
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should not login a user with non-existing email', async () => {
+    expect.assertions(1);
+
+    const loginData = {
+      user_email: 'johndoe@gmail.com',
+      user_password: 'Password123',
+    };
+
+    prismaMock.users.findUnique.mockResolvedValue(null);
+
+    const expectedError = new Error('Invalid credentials');
+    await userService
+      .login(loginData)
+      .catch(error => expect(error).toEqual(expectedError));
+  });
+
+  it('should not login a user with wrong password', async () => {
+    expect.assertions(1);
+
+    const correctPassword = 'Password123';
+
+    const invalidLoginData = {
+      user_email: 'johndoe@gmail.com',
+      user_password: 'Password124',
+    };
+
+    const user = {
+      user_id: BigInt(1),
+      user_first_name: 'John',
+      user_last_name: 'Doe',
+      user_email: 'jackdoe@gmail.com',
+      user_password: await hash(correctPassword, 10),
+      user_favorites: [],
+    };
+
+    prismaMock.users.findUnique.mockResolvedValue(user);
+
+    const isUserAuthOk = await compare(
+      invalidLoginData.user_password,
+      user.user_password
+    );
+
+    if (!isUserAuthOk) {
+      const expectedError = new Error('Invalid credentials');
+      await userService
+        .login(invalidLoginData)
+        .catch(error => expect(error).toEqual(expectedError));
+    }
+  });
+
+  it('should add a favorite to the user', async () => {
+    expect.assertions(1);
+
+    const currentFavorites: Favorite[] = [
+      {
+        id: 1151534,
+        type: 'movie' as ContentType,
+      },
+    ];
+
+    const userId = BigInt(1);
+
+    const newFavoriteData: Favorite = {
+      id: 1151535,
+      type: 'tv' as ContentType,
+    };
+
+    prismaMock.users.update.mockResolvedValue({
+      user_id: BigInt(1),
+      user_first_name: 'John',
+      user_last_name: 'Doe',
+      user_email: 'johndoe@gmail.com',
+      user_password: '',
+      user_favorites: [
+        {
+          id: 1151534,
+          type: 'movie',
+        },
+        {
+          id: 1151535,
+          type: 'tv',
+        },
+      ],
+    });
+
+    const expectedResult = {
+      ok: true,
+      data: [
+        {
+          id: 1151534,
+          type: 'movie',
+        },
+        {
+          id: 1151535,
+          type: 'tv',
+        },
+      ],
+    };
+
+    const result = await userService.addFavorite(
+      currentFavorites,
+      userId,
+      newFavoriteData
+    );
 
     expect(result).toEqual(expectedResult);
   });
