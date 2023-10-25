@@ -92,4 +92,33 @@ When a system sends a frame out on the network, the frame goes into the central 
 
 Later networks replaced the hub with a smarter device called a switch. Switches, as you’ll see in much more detail as we go deeper into networking, filter traffic by MAC address. Rather than sending all incoming frames to all network devices connected to it, a switch sends the frame only to the interface associated with the destination MAC address.
 
-_PAGE 64_
+_FCS (Frame Check Sequence) in Depth_
+
+All FCSs are only 4 bytes long, yet the wired frame carries at most 1500 bytes of data. How can 4 bytes tell you if all 1500 bytes in the data are correct? That’s the magic of the math of the CRC. Without going into the grinding details, think of the CRC as just the remainder of a division problem. (Remember learning remainders from division back in elementary school?) The NIC sending the frame does a little math to make the CRC. Using binary arithmetic, it works a division problem on the data using a divisor called a key. The result of this division is the CRC. When the frame gets to the receiving NIC, it divides the data by the same key. If the receiving NIC’s answer is the same as the CRC, it knows the data is good; if it’s not good, the frame is dropped.
+
+_Getting the Data on the Line_
+
+The process of getting data onto the wire and then picking that data off the wire is amazingly complicated. For instance, what would happen to keep two NICs from speaking at the same time? Because all the data sent by one NIC is read by every other NIC on the network, only one system could speak at a time in early wired networks. Networks use frames to restrict the amount of data a NIC can send at once, giving all NICs a chance to send data over the network in a reasonable span of time. Dealing with this and many other issues requires sophisticated electronics, but the NICs handle these issues completely on their own without our help. Thankfully, the folks who design NICs worry about all these details, so we don’t have to!
+
+_Getting to Know You_
+
+Using the MAC address is a great way to move data around, but this process raises an important question. How does a sending NIC know the MAC address of the NIC to which it’s sending the data? In most cases, the sending system already knows the destination MAC address because the NICs had probably communicated earlier, and each system stores that data. If it doesn’t already know the MAC address, a NIC may send a broadcast onto the network to ask for it. The MAC address of FF-FF-FF-FF-FF-FF is the Layer 2 broadcast address—if a NIC sends a frame using the broadcast address, every single NIC on the network will process that frame. That broadcast frame’s data will contain a request for a system’s MAC address. Without
+knowing the MAC address to begin with, the requesting computer will use an IP address to pick the target computer out of the crowd. The system with the MAC address your system is seeking will read the request in the broadcast frame and respond with its MAC address. (See “IP—Playing on Layer 3, the Network Layer” later in this chapter for more on IP addresses and packets.)
+
+_NOTE_ Any device that deals with a MAC address is part of the OSI Data Link layer, or Layer 2 of the OSI model. Let’s update the OSI model to include details about the Data Link layer.
+
+_NOTE_ that the cabling and hubs are in the Physical layer. Switches handle traffic using MAC addresses, so they operate at Layer 2. That’s the way modern wired networks work. The NIC is in the Data Link layer and the Physical layer.
+
+_The Two Aspects of NICs_
+
+Consider how data moves in and out of a NIC. On one end, frames move into and out of the NIC’s network cable connection. On the other end, data moves back and forth between the NIC and the network operating system software. The many steps a NIC performs to keep this data moving—sending and receiving frames over the wire, creating outgoing frames, reading incoming frames, and attaching MAC addresses—are classically broken down into two distinct jobs.
+
+The first job is called the _Logical Link Control (LLC)._ The LLC is the aspect of the NIC that talks to the system’s operating system (usually via device drivers). The LLC handles multiple network protocols and provides flow control.
+
+The second job is called the _Media Access Control (MAC)_, which creates and addresses the frame. It adds the NIC’s own MAC address and attaches MAC addresses to the frames. Recall that each frame the NIC creates must include both the sender’s and recipient’s MAC addresses. The MAC sublayer adds or checks the FCS. The MAC also ensures that the frames, now complete with their MAC addresses, are then sent along the network cabling. Figure 1-25 shows the Data Link layer in detail.
+
+_PAGE 72_
+
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/tmdb?schema=public"
+
+JWT_SECRET=secret1234
