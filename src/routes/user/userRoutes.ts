@@ -14,17 +14,23 @@ const router = Router();
 router
   .post('/', validateInput(registerUserSchema), UserController.registerUser)
   .post('/login', validateInput(loginUserSchema), UserController.login)
+  .put(
+    '/',
+    deserializeUser,
+    validateInput(updateUserSchema),
+    UserController.updateUser
+  )
   .post(
     '/add-favorite',
     deserializeUser,
     validateInput(userFavoriteSchema),
     UserController.addFavorite
   )
-  .put(
-    '/',
+  .delete(
+    '/remove-favorite',
     deserializeUser,
-    validateInput(updateUserSchema),
-    UserController.updateUser
+    validateInput(userFavoriteSchema),
+    UserController.removeFavorite
   );
 
 export default router;

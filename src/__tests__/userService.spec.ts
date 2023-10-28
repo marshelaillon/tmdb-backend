@@ -244,4 +244,56 @@ describe('user services', () => {
 
     expect(result).toEqual(expectedResult);
   });
+
+  it("should delete a user's favorite", async () => {
+    expect.assertions(1);
+
+    const currentFavorites: Favorite[] = [
+      {
+        id: 1151534,
+        type: 'movie' as ContentType,
+      },
+      {
+        id: 1151535,
+        type: 'tv' as ContentType,
+      },
+    ];
+
+    const userId = BigInt(1);
+
+    const favoriteToDelete: Favorite = {
+      id: 1151535,
+      type: 'tv' as ContentType,
+    };
+
+    prismaMock.users.update.mockResolvedValue({
+      user_id: BigInt(1),
+      user_first_name: 'John',
+      user_last_name: 'Doe',
+      user_email: 'johndoe@gmail.com',
+      user_password: '',
+      user_favorites: [
+        {
+          id: 1151534,
+          type: 'movie',
+        },
+      ],
+    });
+
+    const expectedResult = {
+      ok: true,
+      data: [
+        {
+          id: 1151534,
+          type: 'movie' as ContentType,
+        },
+      ],
+    };
+
+    const result = await userService
+      .removeFavorite(currentFavorites, userId, favoriteToDelete)
+      .catch(err => console.log(err));
+
+    expect(result).toEqual(expectedResult);
+  });
 });

@@ -58,9 +58,24 @@ async function updateUser({ body }: Request, res: Response) {
   }
 }
 
+async function removeFavorite({ body }: Request, res: Response) {
+  try {
+    const response = await UserService.removeFavorite(
+      res.locals.user.user_favorites,
+      res.locals.user.user_id,
+      body
+    );
+    res.json(response);
+  } catch (error) {
+    console.log(error);
+    res.json({ ok: false, data: null, msg: (error as Error).message });
+  }
+}
+
 export default {
   registerUser,
   login,
-  addFavorite,
   updateUser,
+  addFavorite,
+  removeFavorite,
 };

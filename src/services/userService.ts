@@ -169,9 +169,56 @@ async function addFavorite(
   }
 }
 
+async function removeFavorite(
+  currentFavorites: Favorite[],
+  userId: bigint,
+  favoriteToDelete: Favorite
+): Promise<any> {
+  try {
+    const initialLength = currentFavorites.length;
+
+    const favoriteIndex = currentFavorites.findIndex(
+      favorite =>
+        favorite.id === favoriteToDelete.id && favorite.type === favorite.type
+    );
+
+    if (favoriteIndex !== -1) {
+      currentFavorites = currentFavorites
+        .slice(0, favoriteIndex)
+        .concat(currentFavorites.slice(favoriteIndex + 1));
+    } else {
+      throw new Error('Favorite does not exist');
+    }
+
+    const updatedUser = await prisma.users.update({
+      where: {
+        user_id: userId,
+      },
+      data: {
+        user_favorites: {
+          set: currentFavorites.map(({ id, type }) => ({ id, type })),
+        },
+      },
+    });
+
+    if (updatedUser.user_favorites.length < initialLength) {
+      return {
+        ok: true,
+        data: updatedUser.user_favorites,
+      };
+    }
+
+    throw new Error('Something went wrong');
+  } catch (error) {
+    console.log((error as Error).message);
+    throw new Error((error as Error).message);
+  }
+}
+
 export default {
   registerUser,
   login,
   updateUser,
   addFavorite,
+  removeFavorite,
 };
