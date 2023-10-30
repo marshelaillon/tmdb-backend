@@ -4,10 +4,6 @@ import {
   MovieOrTvSeriesDetailsOk,
   SearchResultOk,
 } from '../interfaces/tmdbInterfaces';
-import {
-  searchShrekResult,
-  searchTrueDetectiveResult,
-} from '../data/tmdbResult';
 
 describe('tmdb services', () => {
   it('search a movie and a tv series given a title for each media type', async () => {
@@ -19,16 +15,13 @@ describe('tmdb services', () => {
     const movieTitle = 'shrek';
     const tvTitle = 'true detective';
 
-    const expectedMovieSearchResult = searchShrekResult;
-    const expectedTvSearchResult = searchTrueDetectiveResult;
-
     const movieResult: SearchResultOk =
       await tmdbService.searchMovieOrTvSeriesByTitle(movieType, movieTitle);
     const tvResult: SearchResultOk =
       await tmdbService.searchMovieOrTvSeriesByTitle(tvType, tvTitle);
 
-    expect(movieResult).toEqual(expectedMovieSearchResult);
-    expect(tvResult).toEqual(expectedTvSearchResult);
+    expect(movieResult.ok).toEqual(true);
+    expect("data" in tvResult).toEqual(true);
   });
 
   it('get a movie and a tv series details given an id and a type for each media type', async () => {

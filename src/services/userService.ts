@@ -4,12 +4,14 @@ import {
   LoginUserRequest,
   CreateUserResponse,
   LoginOk,
+  UpdateOk,
 } from '../interfaces/userInterfaces';
 import { generateJwt } from '../utils/jwt';
-import { Favorite } from '../interfaces/favoritesInterfaces';
+import { Favorite, FavoritesOk } from '../interfaces/favoritesInterfaces';
 import { Prisma } from '@prisma/client';
 import prisma from '../prisma/client';
 import arePasswordsEqual from '../utils/checkPasswords';
+import { User } from '../models/User';
 
 export const excludedFields = ['user_password'];
 
@@ -107,7 +109,10 @@ async function login(loginData: LoginUserRequest): Promise<LoginOk> {
   }
 }
 
-async function updateUser(userId: bigint, newUserData: any): Promise<any> {
+async function updateUser(
+  userId: bigint,
+  newUserData: Partial<User>
+): Promise<UpdateOk> {
   try {
     const updatedUser = await prisma.users.update({
       where: {
@@ -126,10 +131,10 @@ async function updateUser(userId: bigint, newUserData: any): Promise<any> {
       };
     }
 
-    return { ok: false, data: null };
+    throw new Error("User couldn't be updated");
   } catch (error) {
     //console.log(error);
-    return { ok: false, data: null };
+    throw new Error((error as Error).message);
   }
 }
 
@@ -137,7 +142,7 @@ async function addFavorite(
   currentFavorites: Favorite[],
   userId: bigint,
   newFavoriteData: Favorite
-): Promise<any> {
+): Promise<FavoritesOk> {
   try {
     const existingFavorite = currentFavorites.find(
       favorite =>
@@ -165,12 +170,12 @@ async function addFavorite(
       return {
         ok: true,
         data: updatedUser.user_favorites,
-        //user_id: Number(updatedUser),
       };
     }
-    throw new Error('Something went wrong');
+
+    throw new Error("Favorite couldn't be added");
   } catch (error) {
-    console.log((error as Error).message);
+    //console.log((error as Error).message);
     throw new Error((error as Error).message);
   }
 }
@@ -179,7 +184,7 @@ async function removeFavorite(
   currentFavorites: Favorite[],
   userId: bigint,
   favoriteToDelete: Favorite
-): Promise<any> {
+): Promise<FavoritesOk> {
   try {
     const initialLength = currentFavorites.length;
 
@@ -216,7 +221,7 @@ async function removeFavorite(
 
     throw new Error('Something went wrong');
   } catch (error) {
-    console.log((error as Error).message);
+    //console.log((error as Error).message);
     throw new Error((error as Error).message);
   }
 }
