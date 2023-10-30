@@ -1,4 +1,4 @@
-import { VideoResult } from '../types/tmdbTypes';
+import { VideoResult } from '../interfaces/tmdbInterfaces';
 
 export const getTrailer = (videos: VideoResult[]): string => {
   const video = videos.find(video => (video.type = 'Trailer'))!;

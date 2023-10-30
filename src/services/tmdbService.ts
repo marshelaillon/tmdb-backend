@@ -5,7 +5,7 @@ import {
   TrendingItemsOk,
   GenreResultOk,
   GenreResultError,
-} from '../types/tmdbTypes';
+} from '../interfaces/tmdbInterfaces';
 import { getTrailer } from '../utils/getTrailer';
 
 const { TMDB_API_KEY } = process.env;

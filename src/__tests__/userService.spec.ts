@@ -1,11 +1,10 @@
-import { compare, hash } from 'bcrypt';
 import { prismaMock } from '../prisma/singleton';
 import { User, InputUser } from '../models/User';
-import userService from '../services/userService';
-import { omit } from 'lodash';
-import { excludedFields } from '../services/userService';
+import { ContentType, Favorite } from '../interfaces/favoritesInterfaces';
+import userService, { excludedFields } from '../services/userService';
 import { generateJwt } from '../utils/jwt';
-import { ContentType, Favorite } from '../types/favoritesTypes';
+import { compare, hash } from 'bcrypt';
+import { omit } from 'lodash';
 
 describe('user services', () => {
   it('should create a user', async () => {

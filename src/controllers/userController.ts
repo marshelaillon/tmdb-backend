@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import UserService from '../services/userService';
-import { CreateUserRequest, CreateUserResponse } from '../types/userTypes';
+import {
+  CreateUserRequest,
+  CreateUserResponse,
+} from '../interfaces/userInterfaces';
 
 async function registerUser(
   { body }: Request<{}, {}, CreateUserRequest>,

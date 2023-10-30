@@ -1,8 +1,11 @@
 import { omit } from 'lodash';
 import { hash, compare } from 'bcrypt';
-import { LoginUserRequest, CreateUserResponse } from '../types/userTypes';
+import {
+  LoginUserRequest,
+  CreateUserResponse,
+} from '../interfaces/userInterfaces';
 import { generateJwt } from '../utils/jwt';
-import { Favorite } from '../types/favoritesTypes';
+import { Favorite } from '../interfaces/favoritesInterfaces';
 import { Prisma } from '@prisma/client';
 import prisma from '../prisma/client';
 import arePasswordsEqual from '../utils/checkPasswords';

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import TmdbService from '../services/tmdbService';
-import { MediaType } from '../types/tmdbTypes';
+import { MediaType } from '../interfaces/tmdbInterfaces';
 
 async function searchMovieOrTVSeriesByTitle(
   { params }: Request,
