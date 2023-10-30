@@ -1,14 +1,26 @@
 import { Request, Response } from 'express';
 import TmdbService from '../services/tmdbService';
-import { MediaType } from '../interfaces/tmdbInterfaces';
+import {
+  GenreResultError,
+  GenreResultOk,
+  MediaType,
+  MovieOrTvSeriesDetailsError,
+  MovieOrTvSeriesDetailsOk,
+  SearchResultError,
+  SearchResultOk,
+  SimilarMoviesOrTvSeriesError,
+  SimilarMoviesOrTvSeriesOk,
+  TrendingItemsError,
+  TrendingItemsOk,
+} from '../interfaces/tmdbInterfaces';
 
 async function searchMovieOrTVSeriesByTitle(
   { params }: Request,
   res: Response
-) {
+): Promise<Response<SearchResultOk | SearchResultError>> {
+  const type = params.type as MediaType;
+  const title = params.title;
   try {
-    const type = params.type as MediaType;
-    const title = params.title;
     const response = await TmdbService.searchMovieOrTvSeriesByTitle(
       type,
       title
@@ -22,10 +34,10 @@ async function searchMovieOrTVSeriesByTitle(
 async function getMovieOrTVSeriesDetailsById(
   { params }: Request,
   res: Response
-) {
+): Promise<Response<MovieOrTvSeriesDetailsOk | MovieOrTvSeriesDetailsError>> {
+  const type = params.type as MediaType;
+  const id = Number(params.id);
   try {
-    const type = params.type as MediaType;
-    const id = Number(params.id);
     const response = await TmdbService.getMovieOrTvSeriesDetailsById(type, id);
     return res.json(response);
   } catch (error) {
@@ -33,7 +45,10 @@ async function getMovieOrTVSeriesDetailsById(
   }
 }
 
-async function getTrendingMoviesOrTvSeries(_: Request, res: Response) {
+async function getTrendingMoviesOrTvSeries(
+  _: Request,
+  res: Response
+): Promise<Response<TrendingItemsOk | TrendingItemsError>> {
   try {
     const response = await TmdbService.getTrendingMoviesOrTvSeries();
     return res.json(response);
@@ -42,7 +57,10 @@ async function getTrendingMoviesOrTvSeries(_: Request, res: Response) {
   }
 }
 
-async function getSimilarMovieOrTv({ params }: Request, res: Response) {
+async function getSimilarMovieOrTv(
+  { params }: Request,
+  res: Response
+): Promise<Response<SimilarMoviesOrTvSeriesOk | SimilarMoviesOrTvSeriesError>> {
   try {
     const type = params.type as MediaType;
     const id = Number(params.id);
@@ -53,7 +71,10 @@ async function getSimilarMovieOrTv({ params }: Request, res: Response) {
   }
 }
 
-async function getGenres(_: Request, res: Response) {
+async function getGenres(
+  _: Request,
+  res: Response
+): Promise<Response<GenreResultOk | GenreResultError>> {
   try {
     const response = await TmdbService.getGenres();
     return res.json(response);

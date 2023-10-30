@@ -35,7 +35,7 @@ export interface SearchResultOk {
 
 export interface SearchResultError {
   ok: boolean;
-  data: null;
+  msg: string;
 }
 
 //* GET MOVIE/TV SERIES DETAILS *//
@@ -125,7 +125,7 @@ export interface MovieOrTvSeriesDetailsOk {
 
 export interface MovieOrTvSeriesDetailsError {
   ok: boolean;
-  data: null;
+  msg: string;
 }
 
 //* TRENDING *//
@@ -166,19 +166,55 @@ export interface TrendingItemsOk {
 
 export interface TrendingItemsError {
   ok: boolean;
-  data: null;
+  msg: string;
+}
+
+//* SIMILAR //*
+
+export interface SimilarMovieOrTvSeries {
+  adult: boolean;
+  backdrop_path: null | string;
+  genre_ids: number[];
+  id: number;
+  origin_country: string[];
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  first_air_date: Date;
+  name: string;
+  vote_average: number;
+  vote_count: number;
+}
+
+export interface SimilarMoviesOrTvSeriesData {
+  page: number;
+  results: SimilarMovieOrTvSeries[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface SimilarMoviesOrTvSeriesOk {
+  ok: boolean;
+  data: SimilarMoviesOrTvSeriesData;
+}
+
+export interface SimilarMoviesOrTvSeriesError {
+  ok: false;
+  msg: string;
 }
 
 //* GENRES */
 
-export interface GenreResult {
-  movie_genres: Genre[];
-  tv_genres: Genre[];
-}
-
 export interface Genre {
   id: number;
   name: string;
+}
+
+export interface GenreResult {
+  movie_genres: Genre[];
+  tv_genres: Genre[];
 }
 
 export interface GenreResultOk {

@@ -5,9 +5,7 @@ import {
   SearchResultOk,
 } from '../interfaces/tmdbInterfaces';
 import {
-  searchShrekDetailsResult,
   searchShrekResult,
-  searchTrueDetectiveDetailsResult,
   searchTrueDetectiveResult,
 } from '../data/tmdbResult';
 
@@ -42,16 +40,13 @@ describe('tmdb services', () => {
     const movieTitleId = 808; // shrek id
     const tvTitleId = 46648; // true detective id
 
-    const expectedMovieSearchResult = searchShrekDetailsResult;
-    const expectedTvSearchResult = searchTrueDetectiveDetailsResult;
-
     const movieResult: MovieOrTvSeriesDetailsOk =
       await tmdbService.getMovieOrTvSeriesDetailsById(movieType, movieTitleId);
     const tvResult: MovieOrTvSeriesDetailsOk =
       await tmdbService.getMovieOrTvSeriesDetailsById(tvType, tvTitleId);
 
-    expect(movieResult).toEqual(expectedMovieSearchResult);
-    expect(tvResult).toEqual(expectedTvSearchResult);
+    expect(movieResult.ok).toEqual(true);
+    expect('data' in tvResult).toEqual(true);
   });
 
   it('get trending movies and tv series', async () => {

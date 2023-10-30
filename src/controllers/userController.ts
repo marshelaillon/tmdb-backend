@@ -16,7 +16,6 @@ async function registerUser(
     );
     return res.json(response);
   } catch (error) {
-    //console.log(error);
     return res.status(400).json({
       ok: false,
       msg: (error as Error).message,

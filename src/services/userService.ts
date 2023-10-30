@@ -3,6 +3,7 @@ import { hash, compare } from 'bcrypt';
 import {
   LoginUserRequest,
   CreateUserResponse,
+  LoginOk,
 } from '../interfaces/userInterfaces';
 import { generateJwt } from '../utils/jwt';
 import { Favorite } from '../interfaces/favoritesInterfaces';
@@ -28,7 +29,6 @@ interface UserCreateInputWithPasswordConfirmation
 }
 
 async function registerUser(
-  //newUserData: any
   newUserData: UserCreateInputWithPasswordConfirmation
 ): Promise<CreateUserResponse> {
   try {
@@ -72,7 +72,7 @@ async function registerUser(
   }
 }
 
-async function login(loginData: LoginUserRequest): Promise<any> {
+async function login(loginData: LoginUserRequest): Promise<LoginOk> {
   try {
     let { user_email, user_password } = loginData;
 
@@ -82,24 +82,27 @@ async function login(loginData: LoginUserRequest): Promise<any> {
       },
     });
 
-    if (user) {
+    if (user !== null) {
       const accessToken = generateJwt(String(user.user_id), user_email);
       const isUserAuthOk = await compare(user_password, user?.user_password);
-      if (isUserAuthOk) {
+
+      if (accessToken && isUserAuthOk) {
+        const loginData = {
+          ...omit({ ...user, user_id: Number(user.user_id) }, excludedFields),
+          accessToken,
+        };
+
         return {
           ok: true,
-          data: {
-            ...omit({ ...user, user_id: Number(user.user_id) }, excludedFields),
-            accessToken,
-          },
+          data: loginData,
         };
       }
+
       throw new Error('Invalid credentials');
     }
 
     throw new Error('Invalid credentials');
   } catch (error) {
-    //console.log(error);
     throw new Error((error as Error).message);
   }
 }
