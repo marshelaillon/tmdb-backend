@@ -4,7 +4,7 @@ import {
   MovieOrTvSeriesDetailsOk,
   TrendingItemsOk,
   GenreResultOk,
-  GenreResultError,
+  SimilarMoviesOrTvSeriesOk,
 } from '../interfaces/tmdbInterfaces';
 import { getTrailer } from '../utils/getTrailer';
 
@@ -65,7 +65,10 @@ async function getTrendingMoviesOrTvSeries(): Promise<TrendingItemsOk> {
   }
 }
 
-async function getSimilarMovieOrTv(type: MediaType, id: number): Promise<any> {
+async function getSimilarMovieOrTv(
+  type: MediaType,
+  id: number
+): Promise<SimilarMoviesOrTvSeriesOk> {
   try {
     const url = new URL(process.env.TMDB_BASE_URL!);
     url.pathname = `3/${type}/${id}/similar`;
@@ -82,7 +85,7 @@ async function getSimilarMovieOrTv(type: MediaType, id: number): Promise<any> {
   }
 }
 
-async function getGenres(): Promise<GenreResultOk | GenreResultError> {
+async function getGenres(): Promise<GenreResultOk> {
   try {
     const movieGenres = new URL(process.env.TMDB_BASE_URL!);
     const tvGenres = new URL(process.env.TMDB_BASE_URL!);
@@ -100,7 +103,7 @@ async function getGenres(): Promise<GenreResultOk | GenreResultError> {
     };
     return { ok: true, data };
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw new Error((error as Error).message);
   }
 }

@@ -21,7 +21,7 @@ describe('tmdb services', () => {
       await tmdbService.searchMovieOrTvSeriesByTitle(tvType, tvTitle);
 
     expect(movieResult.ok).toEqual(true);
-    expect("data" in tvResult).toEqual(true);
+    expect('data' in tvResult).toEqual(true);
   });
 
   it('get a movie and a tv series details given an id and a type for each media type', async () => {
