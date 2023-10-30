@@ -7,7 +7,7 @@ import { compare, hash } from 'bcrypt';
 import { omit } from 'lodash';
 
 describe('user services', () => {
-  it('should create a user', async () => {
+  it('should register a new user', async () => {
     expect.assertions(1);
 
     const inputUser: InputUser = {
@@ -62,7 +62,7 @@ describe('user services', () => {
       .catch(err => expect(err).toEqual(expectedError));
   });
 
-  it('should update a user', async () => {
+  it("should update user's data", async () => {
     expect.assertions(1);
 
     const inputUserData = {
@@ -94,7 +94,7 @@ describe('user services', () => {
     expect(result).toEqual(expectedResult);
   });
 
-  it('should login a user with valid credentials', async () => {
+  it('should log in a user with valid credentials', async () => {
     expect.assertions(1);
 
     let expectedResult;
@@ -136,7 +136,7 @@ describe('user services', () => {
     expect(result).toEqual(expectedResult);
   });
 
-  it('should not login a user with non-existing email', async () => {
+  it('should not log in a user with a non-existing email', async () => {
     expect.assertions(1);
 
     const loginData = {
@@ -152,7 +152,7 @@ describe('user services', () => {
       .catch(error => expect(error).toEqual(expectedError));
   });
 
-  it('should not login a user with wrong password', async () => {
+  it('should not log in a user with a wrong password', async () => {
     expect.assertions(1);
 
     const correctPassword = 'Password123';
@@ -186,7 +186,7 @@ describe('user services', () => {
     }
   });
 
-  it('should add a favorite to the user', async () => {
+  it("should add a favorite to user's favorites", async () => {
     expect.assertions(1);
 
     const currentFavorites: Favorite[] = [
