@@ -118,7 +118,13 @@ async function updateUser(
       where: {
         user_id: userId,
       },
-      data: newUserData,
+      data: {
+        ...newUserData,
+        user_favorites: newUserData.user_favorites?.map(({ id, type }) => ({
+          id,
+          type,
+        })),
+      },
     });
 
     if (updatedUser) {
