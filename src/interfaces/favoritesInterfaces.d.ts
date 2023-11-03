@@ -1,11 +1,8 @@
-export enum ContentType {
-  TV = 'tv',
-  MOVIE = 'movie',
-}
+import { MediaType } from './tmdbInterfaces';
 
 export interface Favorite {
   id: number;
-  type: ContentType;
+  type: MediaType;
 }
 
 export interface FavoritesOk {

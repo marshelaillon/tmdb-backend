@@ -74,10 +74,25 @@ async function removeFavorite({ body }: Request, res: Response) {
   }
 }
 
+async function getFavorites(_: Request, res: Response) {
+  try {
+    const response = await UserService.getFavorites(
+      res.locals.user.user_favorites
+    );
+    res.json(response);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ ok: false, data: null, msg: (error as Error).message });
+  }
+}
+
 export default {
   registerUser,
   login,
   updateUser,
   addFavorite,
   removeFavorite,
+  getFavorites,
 };

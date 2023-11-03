@@ -14,6 +14,8 @@ import { Prisma } from '@prisma/client';
 import prisma from '../prisma/client';
 import arePasswordsEqual from '../utils/checkPasswords';
 import { User } from '../models/User';
+import tmdbService from './tmdbService';
+import _ from 'underscore';
 
 export const excludedFields = ['user_password'];
 
@@ -235,10 +237,38 @@ async function removeFavorite(
   }
 }
 
+async function getFavorites(favorites: Favorite[]) {
+  try {
+    const favoritesPromises = [];
+
+    for (const favorite of favorites) {
+      const promise = tmdbService.getMovieOrTvSeriesDetailsById(
+        favorite.type,
+        favorite.id
+      );
+      favoritesPromises.push(promise);
+    }
+
+    const results = (await Promise.allSettled(favoritesPromises)).map(
+      result => {
+        if (result.status === 'fulfilled') return result.value.data;
+        else return;
+      }
+    );
+
+    const data = _.groupBy(results, 'type');
+
+    return { ok: true, data };
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+}
+
 export default {
   registerUser,
   login,
   updateUser,
   addFavorite,
   removeFavorite,
+  getFavorites,
 };

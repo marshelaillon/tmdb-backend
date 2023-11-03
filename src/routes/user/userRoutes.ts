@@ -31,6 +31,7 @@ router
     deserializeUser,
     validateInput(userFavoriteSchema),
     UserController.removeFavorite
-  );
+  )
+  .get('/favorites', deserializeUser, UserController.getFavorites);
 
 export default router;
