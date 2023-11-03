@@ -1,5 +1,5 @@
 import { prismaMock } from '../prisma/singleton';
-import { User, InputUser } from '../models/User';
+import { InputUser } from '../models/User';
 import { ContentType, Favorite } from '../interfaces/favoritesInterfaces';
 import userService, { excludedFields } from '../services/userService';
 import { generateJwt } from '../utils/jwt';
@@ -18,8 +18,8 @@ describe('user services', () => {
       user_email: 'johndoe1@gmail.com',
     };
 
-    const createdUser: User = {
-      user_id: BigInt(1),
+    const createdUser = {
+      user_id: 1n,
       user_first_name: 'john',
       user_last_name: 'doe',
       user_password: await hash(inputUser.user_password, 10),
@@ -105,7 +105,7 @@ describe('user services', () => {
     };
 
     const user = {
-      user_id: BigInt(1),
+      user_id: 1n,
       user_first_name: 'John',
       user_last_name: 'Doe',
       user_email: 'johndoe@gmail.com',

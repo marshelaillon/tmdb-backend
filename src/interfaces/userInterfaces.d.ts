@@ -24,13 +24,13 @@ export interface UserFavorite {
 
 export interface UserData {
   accessToken: string;
-  user_id?: number;
-  user_email?: string;
-  user_password?: string;
-  user_first_name?: string;
-  user_last_name?: string;
+  user_id: number;
+  user_email: string;
+  user_password: string;
+  user_first_name: string;
+  user_last_name: string;
   //user_favorites?: Prisma.JsonValue[];
-  user_favorites?: Prisma.JsonArray<UserFavorite>;
+  user_favorites: Prisma.JsonArray<UserFavorite>;
 }
 
 export interface LoginOk {
@@ -41,7 +41,8 @@ export interface LoginOk {
 export interface UserDataWithoutAccessToken
   extends Omit<UserData, 'accessToken'> {}
 
-export interface UpdateOk extends LoginOk {
+export interface UpdateOk {
+  ok: boolean;
   data: UserDataWithoutAccessToken;
 }
 

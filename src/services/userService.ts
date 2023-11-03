@@ -5,6 +5,8 @@ import {
   CreateUserResponse,
   LoginOk,
   UpdateOk,
+  UserDataWithoutAccessToken,
+  UserData,
 } from '../interfaces/userInterfaces';
 import { generateJwt } from '../utils/jwt';
 import { Favorite, FavoritesOk } from '../interfaces/favoritesInterfaces';
@@ -96,7 +98,7 @@ async function login(loginData: LoginUserRequest): Promise<LoginOk> {
 
         return {
           ok: true,
-          data: loginData,
+          data: loginData as UserData,
         };
       }
 
@@ -134,7 +136,7 @@ async function updateUser(
         data: omit(
           { ...updatedUser, user_id: Number(updatedUser.user_id) },
           excludedFields
-        ),
+        ) as UserDataWithoutAccessToken,
       };
     }
 
