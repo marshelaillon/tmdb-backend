@@ -1,10 +1,11 @@
 import { prismaMock } from '../prisma/singleton';
 import { InputUser } from '../models/User';
-import { ContentType, Favorite } from '../interfaces/favoritesInterfaces';
+import { Favorite } from '../interfaces/favoritesInterfaces';
 import userService, { excludedFields } from '../services/userService';
 import { generateJwt } from '../utils/jwt';
 import { compare, hash } from 'bcrypt';
 import { omit } from 'lodash';
+import { MediaType } from '../interfaces/tmdbInterfaces';
 
 describe('user services', () => {
   it('should register a new user', async () => {
@@ -192,7 +193,7 @@ describe('user services', () => {
     const currentFavorites: Favorite[] = [
       {
         id: 1151534,
-        type: 'movie' as ContentType,
+        type: 'movie' as MediaType,
       },
     ];
 
@@ -200,7 +201,7 @@ describe('user services', () => {
 
     const newFavoriteData: Favorite = {
       id: 1151535,
-      type: 'tv' as ContentType,
+      type: 'tv' as MediaType,
     };
 
     prismaMock.users.update.mockResolvedValue({
@@ -250,11 +251,11 @@ describe('user services', () => {
     const currentFavorites: Favorite[] = [
       {
         id: 1151534,
-        type: 'movie' as ContentType,
+        type: 'movie' as MediaType,
       },
       {
         id: 1151535,
-        type: 'tv' as ContentType,
+        type: 'tv' as MediaType,
       },
     ];
 
@@ -262,7 +263,7 @@ describe('user services', () => {
 
     const favoriteToDelete: Favorite = {
       id: 1151535,
-      type: 'tv' as ContentType,
+      type: 'tv' as MediaType,
     };
 
     prismaMock.users.update.mockResolvedValue({
@@ -284,7 +285,7 @@ describe('user services', () => {
       data: [
         {
           id: 1151534,
-          type: 'movie' as ContentType,
+          type: 'movie' as MediaType,
         },
       ],
     };
