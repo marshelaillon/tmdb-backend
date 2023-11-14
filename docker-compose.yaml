@@ -18,20 +18,20 @@ services:
     volumes:
       - tmdb_db_vol:/var/lib/postgresql/data
 
+  pg_admin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'
+      PGADMIN_DEFAULT_PASSWORD: 'admin'
+    ports:
+      - '80:80'
+    depends_on:
+      - tmdb_db
+    networks:
+      - tmdb-net
+
 volumes:
   tmdb_db_vol: {}
-
-  # pg_admin:
-  #   image: dpage/pgadmin4:latest
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'
-  #     PGADMIN_DEFAULT_PASSWORD: 'admin'
-  #   ports:
-  #     - '80:80'
-  #   depends_on:
-  #     - tmdb_db
-  #   networks:
-  #     - tmdb-net
 
   # tmdb_api:
   #   build:

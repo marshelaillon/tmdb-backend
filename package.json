@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "ts-node-dev --env-file .env.development src/index.ts",
+    "dev-docker": "ts-node-dev --env-file .env.docker src/index.ts",
     "test": "set NODE_OPTIONS=--experimental-vm-modules && npx jest",
     "build": "tsc"
   },
@@ -16,7 +17,6 @@
     "@types/lodash": "4.14.199",
     "@types/morgan": "1.9.7",
     "bcrypt": "5.1.1",
-    "dotenv": "16.3.1",
     "express": "4.18.2",
     "jsonwebtoken": "9.0.2",
     "lodash": "4.17.21",
